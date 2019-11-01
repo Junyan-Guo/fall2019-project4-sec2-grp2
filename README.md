@@ -12,7 +12,17 @@ Term: Fall 2019
 	+ Huang, Yian yh3127@columbia.edu
 	+ Xu, Chang cx2207@columbia.edu
 	+ Yang, Nan ny2291@columbia.edu
-+ Project summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
++ Project summary: 
+Project 4 Collaborative Filtering Algorithms Evaluation
+
+In this project, working in teams, our group will implement, evaluate and compare algorithms for Collaborative Filtering.
+
+Challenge
+
+Collaborative filtering refers to the process of making automatic predictions (filtering) about the interests of a user by collecting preferences or taste information from many users (collaborating).
+
+For this project, our team is assigned specific algorithms from the Collaborative filtering literature. The aim of this project is to will study the algorithms carefully and implement them, from scratch. The details of the pairing assignment is in https://drive.google.com/file/d/1NPcbGBv9hVOTXr1sYq_R7ze0qC25CkuB/view. 
+
 	
 **Contribution statement**: [default] All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
 
