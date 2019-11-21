@@ -21,11 +21,11 @@ Term: Fall 2019
 
 **Contribution statement**: 
 
-Implementation of A3+R1R2: Hu Hang, Yang Nan
+Implementation of modeling A3+R1R2: Hu Hang, Yang Nan
 
-Implementation of A3+R3: Xu Chang
+Implementation of modeling A3+R3: Xu Chang
 
-Implementation of P2:Huang Yian
+Implementation of modeling P2:Huang Yian
 
 Preparing Slides for presentation: Nyu Chai
 
