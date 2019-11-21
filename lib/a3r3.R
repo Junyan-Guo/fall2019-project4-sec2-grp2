@@ -114,14 +114,42 @@ ALS.R3 <- function(f = 10, lambda = 5, max.iter, data, train, test){
     }
     
     # Rating Matrix
-    
+    mat <- matrix(rep(NA, U*I), ncol = I)
     for (u in 1:U) {
       for (i in 1:I) {
-        sub <- filter(train, userId == u, movieId == i) 
-        bin_num <- as.numeric(sub$Bin)
-        R[u, i] <- mu + bu[,u] + bi[,i] + bit[bin_num, i] + t(p[,u]) %*% q[,i]
+        mat[u, i] <- as.numeric(t(p[,u]) %*% q[,i])
       }
     }
+    
+    bu_ui <- matrix(rep(NA, U*I), ncol = I)
+    for (i in 1:I) {
+      bu_ui[,i] <- t(bu)
+    }
+    
+    bi_ui <- matrix(rep(NA, U*I), ncol = I)
+    for (u in 1:U) {
+      bi_ui[u, ] <- bi
+    }
+    
+    bit_ui <- matrix(rep(0, U*I), ncol = I)
+    for (u in 1:U) {
+      for (i in 1:I) {
+          sub <- filter(train, userId == u, movieId == i)
+          if (dim(sub)[1] > 0) {
+            t <- as.numeric(sub$Bin)
+            bit_ui[u, i] <- bit[t, i]
+          }
+        }
+      }
+    
+    
+  
+    mu_ui <- matrix(rep(mu, U*I), ncol = I)
+    
+    R <- mu_ui + bu_ui + bi_ui + mat + bit_ui
+    
+  
+   
      
   
     
