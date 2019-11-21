@@ -1,21 +1,4 @@
 # Project 4: Algorithm implementation and evaluation: Collaborative Filtering
-
-### [Project Description](doc/project4_desc.md)
-
-Term: Fall 2019
-
-+ Team # 2
-+ Projec title: Algorithm Implementation and Evaluation: Collaborative Filtering for Nexflix movie rating dataset
-+ Team members:
-	+ Chai, Nyu nc2774@columbia.edu
-	+ Hu, Hang hh2718@columbia.edu
-	+ Huang, Yian yh3127@columbia.edu
-	+ Xu, Chang cx2207@columbia.edu
-	+ Yang, Nan ny2291@columbia.edu
-+ Project summary: 
-
-
-# Project 4: Algorithm implementation and evaluation: Collaborative Filtering
 ### [Project Description](doc/project4_desc.md)
 Term: Fall 2019
 + Team # 2
@@ -55,30 +38,20 @@ Term: Fall 2019
 
          Our Netfilx Prize dataset includes 100836 ratings and 3683 tag applications across 9742 movies. These data were created by 610 users between March 29, 1996 and September 24, 2018. This dataset was generated on September 26, 2018. Users were selected at random for inclusion. All selected users had rated at least 20 movies. 
 
-
-**Contribution statement**: 
-
-Implementation of modeling A3+R1R2: Hu Hang, Yang Nan
-
-Implementation of modeling A3+R3: Xu Chang
-
-Implementation of modeling P2:Huang Yian
-
-Preparing Slides for presentation: Nyu Chai
-
-Kniting `main.R` report: Hu Hang, Yang Nan
-
-Report: Nyu Chai, Huan Yian
-
-Presentation: Nyu Chai
-
-
- **References**
- 1. Y. Koren. “Matrix Factorization Techniques for Recommender Systems.” Journal Computer, 42 , no. 8, 2009, pp. 30–37.
-2. A. Paterek, “Improving Regularized Singular Value Decomposition for Collaborative Filtering,” Proc. KDD Cup and Workshop, ACM Press, 2007, pp. 39-42.
-3. R. Salakhutdinov and A. Mnih, “Probabilistic Matrix Factorization,” Proc. Advances in Neural Information Processing Systems 20 (NIPS 07), ACM Press, 2008, pp. 1257-1264.
-4. Y. Zhou et al., “Large-Scale Parallel Collaborative Filtering for the Netflix Prize,” Proc. 4th Int’l Conf. Algorithmic Aspects in Information and Management, LNCS 5034, Springer, 2008, pp. 337-348.
-5. Y. Koren, “Collaborative Filtering with Temporal Dynam- ics,” Proc. 15th ACM SIGKDD Int’l Conf. Knowledge Discovery and Data Mining (KDD 09), ACM Press, 2009, pp. 447-455.
++ **Contribution statement**: 
+	+ Implementation of modeling A3+R1R2: Hu Hang, Yang Nan
+	+ Implementation of modeling A3+R3: Xu Chang
+	+ Implementation of modeling P2:Huang Yian
+	+ Preparing Slides for presentation & presentation : Nyu Chai
+	+ Kniting `main.R` report: Hu Hang, Yang Nan
+	+ Report: Nyu Chai, Huan Yian
+	
+ + **References**
+	+ Y. Koren. “Matrix Factorization Techniques for Recommender Systems.” Journal Computer, 42 , no. 8, 2009, pp. 30–37.
+	+ A. Paterek, “Improving Regularized Singular Value Decomposition for Collaborative Filtering,” Proc. KDD Cup and Workshop, ACM Press, 2007, pp. 39-42.
+	+ R. Salakhutdinov and A. Mnih, “Probabilistic Matrix Factorization,” Proc. Advances in Neural Information Processing Systems 20 (NIPS 07), ACM Press, 2008, pp. 1257-1264.
+	+ Y. Zhou et al., “Large-Scale Parallel Collaborative Filtering for the Netflix Prize,” Proc. 4th Int’l Conf. Algorithmic Aspects in Information and Management, LNCS 5034, Springer, 2008, pp. 337-348.
+	+ Y. Koren, “Collaborative Filtering with Temporal Dynam- ics,” Proc. 15th ACM SIGKDD Int’l Conf. Knowledge Discovery and Data Mining (KDD 09), ACM Press, 2009, pp. 447-455.
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
 ```
