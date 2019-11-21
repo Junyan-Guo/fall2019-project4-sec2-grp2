@@ -1826,8 +1826,9 @@ source(&quot;../lib/a3r3.R&quot;)</code></pre>
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuQUxTLlIzKGYgPSAxMCwgbGFtYmRhID0gNSwgbWF4Lml0ZXIgPSAxMCwgZGF0YSA9IGRhdGEsIHRyYWluID0gZGF0YV90cmFpbiwgdGVzdCA9IGRhdGFfdGVzdClcbmBgYCJ9 -->
 <pre class="r"><code>ALS.R3(f = 10, lambda = 5, max.iter = 10, data = data, train = data_train, test = data_test)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gYnVbLCB1X3JhdGVkX2ldIDogaW5jb3JyZWN0IG51bWJlciBvZiBkaW1lbnNpb25zXG4ifQ== -->
-<pre><code>Error in bu[, u_rated_i] : incorrect number of dimensions</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gc29sdmUocS50aWxkZVssIGkucmF0ZWQuYnkudV0gJSolIHQocS50aWxkZVssIGkucmF0ZWQuYnkudV0pICsgIDogXG4gIG9iamVjdCAncS50aWxkZScgbm90IGZvdW5kXG4ifQ== -->
+<pre><code>Error in solve(q.tilde[, i.rated.by.u] %*% t(q.tilde[, i.rated.by.u]) +  : 
+  object 'q.tilde' not found</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->

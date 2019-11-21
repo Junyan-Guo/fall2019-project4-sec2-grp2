@@ -66,88 +66,80 @@ ALS.R3 <- function(f = 10, lambda = 5, max.iter, data, train, test){
   for (l in 1:max.iter){
     # Step 2: Fix q, solve p
     # we need new factors to add bu, bi into calculation
-   
-     
-      #subtrain <- filter(train, Bin == t)
-      
-      q_idb <- rbind(rep(1,I), q)
-      colnames(q_idb) <- levels(as.factor(data$movieId))
-      p_idb <- rbind(bu, p)
-      
-      for (u in 1:U) {
-        # find all the moives rated by user u
-        i_ratedby_u <- as.character(train[train$userId==u,]$movieId)
-        x<-train[train$userId==u,]$rating
-        R_m_u <- matrix(x,ncol=length(x),nrow = 1)
-        
-        # update p(t).tilde
-        p_idb[,u] <- solve(q_idb[,i_ratedby_u] %*% t(q_idb[,i_ratedby_u]) + lambda * diag(f+1)) %*%
-          q_idb[,i_ratedby_u] %*% t(R_m_u - mu -bi[,i_ratedby_u])
-      }
-      
-      # update bu and p 
-      bu <- p_idb[1, ]
-      p <- p_idb[-1, ]
-      
-      
-      # Step 3: Fix p, solve q
-      # we need new factors to add bu, bi into calculation
-      p_idb <- rbind(rep(1,U), p)
-      colnames(p_idb) <- levels(as.factor(data$userId))
-      q_idb <- rbind(bi, q)
-      
-      for (i in 1:I) {
-        # find all the users who rate movie i
-        u_rated_i <- as.character(train[train$movieId==movie.id[i],]$userId)
-        
-        y<-train[train$movieId==movie.id[i],]$rating
-        R_m_m <- matrix(y,ncol=length(y),nrow=1)
-        
-        q_idb[,i] <- solve(p_idb[,u_rated_i] %*% t(p_idb[,u_rated_i]) + lambda* diag(f+1)) %*%
-          p_idb[,u_rated_i] %*% t(R_m_m - mu - bu[,u_rated_i])
-        
-      }
-      
-      # update bi and q
-      bi[1,] <- q_idb[1,]
-      q <- q_idb[-1,]
-      
-      ## update bit
-      for (t in 1:30) {
-        sub <- filter(train, Bin == t)
-        for (i in 1:I) {
-          ssub <- filter(sub, movieId == i) 
-          bit[i, t] <- sum(ssub$rating)/(length(unique(ssub$userId))+lambda)
-        }
-      }
-      
-      predict <- function(P, Q, bi, bu) {
-        for (u in 1:U) {
-          for (i in 1:I) {
-            sub <- filter(data, userId == u, movieId == i) 
-            bin_num <- sub$Bin
-            R[u, i] <- mu + bu[u] + bi[i] + bit[bin_num, i] + t(p[u, ]) %*% q[,i]
-          }
-        }
-        return(R)
-      }
-
-      
-      # Summerize
-      cat("iter:", l, "\t")
-      est_rating <- predict(P = p, Q = q, bi = bi, bu = bu)
-      colnames(est_rating) <- levels(as.factor(data$movieId))
-      
-      train_RMSE_cur <- RMSE(train, est_rating)
-      cat("training RMSE:", train_RMSE_cur, "\t")
-      train_RMSE <- c(train_RMSE, train_RMSE_cur)
-      
-      test_RMSE_cur <- RMSE(test, est_rating)
-      cat("test RMSE:",test_RMSE_cur, "\n")
-      test_RMSE <- c(test_RMSE, test_RMSE_cur)
-      
-    return(list(p = p, q = q, bi = bi, bu = bu, mu= mu, train_RMSE = train_RMSE, test_RMSE = test_RMSE))
+    q_idb <- rbind(rep(1,I), q)
+    colnames(q_idb) <- levels(as.factor(data$movieId))
+    p_idb <- rbind(bu, p)
     
+    for (u in 1:U) {
+      # find all the moives rated by user u
+      i_ratedby_u <- as.character(train[train$userId==u,]$movieId)
+      x<-train[train$userId==u,]$rating
+      R_m_u <- matrix(x,ncol=length(x),nrow = 1)
+      # update p.tilde
+      p_idb[,u] <- solve(q_idb[,i_ratedby_u] %*% t(q_idb[,i_ratedby_u]) + lambda * diag(f+1)) %*%
+        q_idb[,i_ratedby_u] %*% t(R_m_u - mu -bi[,i_ratedby_u])
     }
+    
+    # update bu and p
+    bu[1,] <- p_idb[1, ]
+    p <- p_idb[-1, ]
+    
+    # Step 3: Fix p, solve q
+    # we need new factors to add bu, bi into calculation
+    p.tilde <- rbind(rep(1,U), p)
+    colnames(p.tilde) <- levels(as.factor(data$userId))
+    q.tilde <- rbind(bi, q)
+    
+    for (i in 1:I) {
+      # find all the users who rate movie i
+      u.rated.i <- as.character(train[train$movieId==movie.id[i],]$userId)
+      q.tilde[,i] <- solve(p.tilde[,u.rated.i] %*% t(p.tilde[,u.rated.i]) + lambda* diag(f+1)) %*%
+        p.tilde[,u.rated.i] %*% (train[train$movieId==movie.id[i],]$rating - mu - bu[,u.rated.i])
+      
+    }
+    
+    # update bi and q
+    bi[1,] <- q.tilde[1,]
+    q <- q.tilde[-1,]
+    
+    ## update bit
+    for (t in 1:30) {
+      sub <- filter(train, Bin == t)
+      for (i in 1:I) {
+        ssub <- filter(sub, movieId == i) 
+        r <- sum(ssub$rating)
+        n <- length(unique(ssub$userId))+lambda
+        bit[t, i] <- r/n
+      }
+    }
+    
+    # Rating Matrix
+    predict <- function(P, Q, bi, bu) {
+      for (u in 1:U) {
+        for (i in 1:I) {
+          sub <- filter(data, userId == u, movieId == i) 
+          bin_num <- sub$Bin
+          R[u, i] <- mu + bu[u] + bi[i] + bit[bin_num, i] + t(p[u, ]) %*% q[,i]
+        }
+      }
+      return(R)
+    }
+    
+    # Summerize
+    cat("iter:", l, "\t")
+    est_rating <- predict(P = p, Q = q, bi = bi, bu = bu)
+    colnames(est_rating) <- levels(as.factor(data$movieId))
+    
+    train_RMSE_cur <- RMSE(train, est_rating)
+    cat("training RMSE:", train_RMSE_cur, "\t")
+    train_RMSE <- c(train_RMSE, train_RMSE_cur)
+    
+    test_RMSE_cur <- RMSE(test, est_rating)
+    cat("test RMSE:",test_RMSE_cur, "\n")
+    test_RMSE <- c(test_RMSE, test_RMSE_cur)
+    
+  }
+  return(list(p = p, q = q, bi = bi, bu = bu, mu= mu, train_RMSE = train_RMSE, test_RMSE = test_RMSE))
+  
   
 }
