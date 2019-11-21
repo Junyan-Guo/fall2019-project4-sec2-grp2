@@ -20,21 +20,6 @@ RMSE <- function(rating, est_rating) {
 }
 
 
-
-RMSE <- function(rating, est_rating){
-  sqr_err <- function(obs){
-    a <- as.character(obs[1])
-    b <- as.character(obs[2])
-    sqr_error <- (obs[3] - est_rating[a,b])^2
-    return(sqr_error)
-  }
-  return(sqrt(mean(apply(rating, 1, sqr_err))))  
-}
-
-
-
-
-
 # Alternating least squares
 # a function returns a list containing factorized matrices p and q, training and testing RMSEs.
 
@@ -186,7 +171,7 @@ ALS.R3 <- function(f = 10, lambda = 5, max.iter, data, train, test){
     test_RMSE <- c(test_RMSE, test_RMSE_cur)
     
   }
-  return(list(p = p, q = q, bi = bi, bu = bu, mu= mu, train_RMSE = train_RMSE, test_RMSE = test_RMSE))
-  
-  
+  return(list(p = p, q = q, bi = bi, bu = bu, mu= mu, 
+              train_RMSE = train_RMSE, test_RMSE = test_RMSE,
+              est_rating = est_rating))
 }
