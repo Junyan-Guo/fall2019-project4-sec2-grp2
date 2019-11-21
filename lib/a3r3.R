@@ -114,20 +114,20 @@ ALS.R3 <- function(f = 10, lambda = 5, max.iter, data, train, test){
     }
     
     # Rating Matrix
-    predict <- function(P, Q, bi, bu) {
-      for (u in 1:U) {
-        for (i in 1:I) {
-          sub <- filter(data, userId == u, movieId == i) 
-          bin_num <- sub$Bin
-          R[u, i] <- mu + bu[u] + bi[i] + bit[bin_num, i] + t(p[u, ]) %*% q[,i]
-        }
+    
+    for (u in 1:U) {
+      for (i in 1:I) {
+        sub <- filter(train, userId == u, movieId == i) 
+        bin_num <- as.numeric(sub$Bin)
+        R[u, i] <- mu + bu[,u] + bi[,i] + bit[bin_num, i] + t(p[,u]) %*% q[,i]
       }
-      return(R)
     }
+     
+  
     
     # Summerize
     cat("iter:", l, "\t")
-    est_rating <- predict(P = p, Q = q, bi = bi, bu = bu)
+    est_rating <- R
     colnames(est_rating) <- levels(as.factor(data$movieId))
     
     train_RMSE_cur <- RMSE(train, est_rating)
