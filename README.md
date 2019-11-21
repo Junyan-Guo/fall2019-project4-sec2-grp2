@@ -19,22 +19,28 @@ Term: Fall 2019
         
 	+ **Objective** 
         
-        In this project, our group implement, evaluate and compare algorithms for **_Collaborative Filtering_** to produce a good prediction of users’ preferences for movies on on the Netflix Prize dataset. 
+        In this project, our group implement, evaluate and compare algorithms for **_Collaborative Filtering_** to produce a good prediction of users’ preferences for movies on on the Netflix Prize dataset. For this project, our team #2 is assigned with [Pairing combination 9 + 11 + 13  from the Collaborative](https://drive.google.com/file/d/1NPcbGBv9hVOTXr1sYq_R7ze0qC25CkuB/view). The specific technique used for the combination are illustrated below. You can also [click here](https://github.com/TZstatsADS/ADS_Teaching/blob/master/Projects_StarterCodes/Project4-RecommenderSystem/doc/Matrix%20Factorization.pdf) for more details of our methods. 
+
+
+		+ **Algorithms** 
+		- [ ] Stochastic Gradient Descent
+		- [ ] Gradient Descent with Probabilistic Assumptions
+		- [x] Alternating Least Squares 
+		
+		+ **Regularization** 
+		- [x] Penalty of Magnitudes 
+		- [x] Bias and Intercepts
+		- [x] Temporal Dynamics
+		
+		+ **Post-processing** 
+		- [x] KNN
+		- [ ] kernel ridge regression
+	
         
 	+ **Data** 
 
-        Our Netfilx Prize dataset includes 100836 ratings and 3683 tag applications across 9742 movies. These data were created by 610 users between March 29, 1996 and September 24, 2018. This dataset was generated on September 26, 2018. Users were selected at random for inclusion. All selected users had rated at least 20 movies. 
+        Our Netfilx Prize dataset includes 100836 ratings and 3683 tag applications across 9742 movies. These data were created by 610 users between March 29, 1996 and September 24, 2018. This dataset was generated on September 26, 2018. Users were selected at random for inclusion. All selected users had rated at least 20 movies. 	
 
-	+ **Approach** 
-	
-
-
-
-Challenge
-
-Collaborative filtering refers to the process of making automatic predictions (filtering) about the interests of a user by collecting preferences or taste information from many users (collaborating).
-
-For this project, our team is assigned specific algorithms from the Collaborative filtering literature. The aim of this project is to will study the algorithms carefully and implement them, from scratch. The details of the pairing assignment is in https://drive.google.com/file/d/1NPcbGBv9hVOTXr1sYq_R7ze0qC25CkuB/view. 
 
 **References**
 1. Y. Koren. “Matrix Factorization Techniques for Recommender Systems.” Journal Computer, 42 , no. 8, 2009, pp. 30–37.
