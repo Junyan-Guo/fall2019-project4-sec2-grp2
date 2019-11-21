@@ -9,13 +9,28 @@
 
 #Define a function to calculate RMSE
 
+RMSE <- function(rating, est_rating) {
+  error <- rep(NA, nrow(rating))
+  for (i in 1:nrow(rating)) {
+    a <- as.character(rating[i,1])
+    b <-as.character(rating[i,2])  
+    error[i] <- (rating[i,3]-est_rating[a, b])^2
+  }
+  return(sqrt(mean(error)))
+}
+
+
+
 RMSE <- function(rating, est_rating){
   sqr_err <- function(obs){
-    sqr_error <- (obs[3] - est_rating[as.character(obs[1]), as.character(obs[2])])^2
+    a <- as.character(obs[1])
+    b <- as.character(obs[2])
+    sqr_error <- (obs[3] - est_rating[a,b])^2
     return(sqr_error)
   }
   return(sqrt(mean(apply(rating, 1, sqr_err))))  
 }
+
 
 
 
