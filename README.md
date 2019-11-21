@@ -29,8 +29,6 @@ Implementation of P2:Huang Yian
 
 Preparing Slides for presentation: Nyu Chai
 
-Report: Nyu Chai
-
 Presentation: Nyu Chai
 
 
