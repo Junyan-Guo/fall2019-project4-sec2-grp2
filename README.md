@@ -27,7 +27,7 @@ Implementation of A3+R3: Xu Chang
 
 Implementation of P2:Huang Yian
 
-Preparing Slides for presentation: Nyu Chai
+Preparing Slides and report: Nyu Chai
 
 Presentation: Nyu Chai
 
