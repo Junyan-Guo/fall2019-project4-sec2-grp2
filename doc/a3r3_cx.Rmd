@@ -1,0 +1,351 @@
+---
+title: "A3 + R3"
+author: "Chang Xu"
+output: html_notebook
+---
+
+```{r, include = F}
+knitr::opts_chunk$set(error = TRUE)
+knitr::opts_chunk$set(cache = F)
+knitr::opts_chunk$set(message = FALSE)
+knitr::opts_chunk$set(warning = FALSE)
+options(mc.cores = parallel::detectCores())
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(anytime)
+```
+
+
+## Load data, split dataset
+
+```{r}
+data <- read.csv("../data/ml-latest-small/ratings.csv")
+```
+```{r}
+data$timestamp <- anydate(data$timestamp)
+data <- arrange(data, timestamp)
+```
+```{r}
+bins <- as.numeric(max(data$timestamp) - min(data$timestamp))
+cut <- seq(0, 1, by=1/30)
+quan <- quantile(c(1:bins), cut)
+Bin <- rep(NA, nrow(data)-1)
+for (i in 1:nrow(data)) {
+    dev <- as.numeric(data$timestamp[i] - data$timestamp[1]) + 1
+    for (j in 1:30) {
+        if (quan[j] <= dev & dev <= quan[j+1]) Bin[i] = j
+    }
+}
+data$Bin <- c(Bin, 30)
+```
+
+```{r}
+set.seed(0)
+## shuffle the row of the entire dataset
+data <- data[sample(nrow(data)),]
+## get a small dataset that contains all users and all movies
+unique.user<-duplicated(data[,1])
+unique.movie<-duplicated(data[,2])
+index<-unique.user & unique.movie
+all.user.movie <- data[!index,]
+
+## split training and test on the rest
+rest <- data[index,]
+test_idx <- sample(rownames(rest), round(nrow(data)/5, 0))
+train_idx <- setdiff(rownames(rest), test_idx)
+
+## combine the training with the previous dataset, which has all users and all movies
+data_train <- rbind(all.user.movie, data[train_idx,])
+data_test <- data[test_idx,]
+
+## sort the training and testing data by userId then by movieId, 
+## so when we update p and q, it is less likely to make mistakes
+data_train <- arrange(data_train, userId, movieId)
+data_test <- arrange(data_test, userId, movieId)
+```
+
+
+
+## A3 + R3
+
+```{r}
+U <- length(unique(data$userId))
+I <- length(unique(data$movieId))
+source("../lib/a3r3.R")
+```
+```{r}
+ALS.R3(f = 10, lambda = 5, max.iter = 10, data = data, train = data_train, test = data_test)
+```
+
+## cross validation
+
+```{r}
+source("../lib/cross_validation.R")
+f_list <- seq(10, 20, 10)
+l_list <- seq(-2, -1, 1)
+f_l <- expand.grid(f_list, l_list)
+```
+
+```{r, eval=FALSE}
+result_summary <- array(NA, dim = c(nrow(f_l), 10, 4)) 
+run_time <- system.time(for(i in 1:nrow(f_l)){
+    par <- paste("f = ", f_l[i,1], ", lambda = ", 10^f_l[i,2])
+    cat(par, "\n")
+    current_result <- cv.function(data, K = 5, f = f_l[i,1], lambda = 10^f_l[i,2])
+    result_summary[,,i] <- matrix(unlist(current_result), ncol = 10, byrow = T) 
+    print(result_summary)
+  
+})
+
+save(result_summary, file = "../output/rmse.Rdata")
+```
+
+```{r}
+load("../output/rmse.Rdata")
+rmse <- data.frame(rbind(t(result_summary[1,,]), t(result_summary[2,,])), train_test = rep(c("Train", "Test"), each = 4), par = rep(paste("f = ", f_l[,1], ", lambda = ", 10^f_l[,2]), times = 2)) %>% gather("epoch", "RMSE", -train_test, -par)
+rmse$epoch <- as.numeric(gsub("X", "", rmse$epoch))
+rmse %>% ggplot(aes(x = epoch, y = RMSE, col = train_test)) + geom_point() + facet_grid(~par)
+```
+
+
+## KNN
+```{r, eval= FALSE}
+result <- gradesc(f = 10, lambda = 0.1,lrate = 0.01, max.iter = 100, stopping.deriv = 0.01,
+                   data = data, train = data_train, test = data_test)
+
+save(result, file = "../output/mat_fac.RData")
+```
+
+```{r}
+load(file = "../output/mat_fac.RData")
+
+pred_rating <- t(result$q) %*% result$p
+#define a function to extract the corresponding predictedrating for the test set.
+extract_pred_rating <- function(test_set, pred){
+  pred_rating <- pred[as.character(test_set[2]), as.character(test_set[1])]
+  return(pred_rating)
+}
+#extract predicted rating
+pred_test_rating <- apply(data_test, 1, extract_pred_rating, pred_rating)
+
+#mean(P)
+pred_mean <- mean(pred_test_rating)
+#mean(test)
+mean_test_rating <- mean(data_test$rating)
+
+#mean(test) - mean(P)
+mean_diff <- mean_test_rating - pred_mean
+
+data_test$pred <- pred_test_rating
+data_test$pred_adj <- pred_test_rating + mean_diff
+
+boxplot(data_test$pred_adj ~ data_test$rating)
+#calculate RMSE
+rmse_adj <- sqrt(mean((data_test$rating - data_test$pred_adj)^2))
+cat("The RMSE of the adjusted model is", rmse_adj)
+```
+
+
+
+
+
+
+```{r, eval = F}
+#Define a function to calculate RMSE
+RMSE <- function(rating, est_rating){
+  sqr_err <- function(obs){
+    sqr_error <- (obs[3] - est_rating[as.character(obs[1]), as.character(obs[2])])^2
+    return(sqr_error)
+  }
+  return(sqrt(mean(apply(rating, 1, sqr_err))))  
+}
+
+
+
+# Alternating least squares
+# a function returns a list containing factorized matrices p and q, training and testing RMSEs.
+
+ALS.R3 <- function(f = 10, lambda = 5, max.iter, data, train, test){
+  
+  # Step 1: Initialize Movie matrix (q), User matrix (p), Movie bias(bi) and User bias(bu)
+  p <- matrix(runif(f*U, -10, 10), ncol = U) 
+  colnames(p) <- levels(as.factor(data$userId))
+  
+  q <- matrix(runif(f*I, -10, 10), ncol = I)
+  colnames(q) <- levels(as.factor(data$movieId))
+  
+  # bu <- matrix(rep(0, U), ncol=U)
+  # colnames(bu) <- levels(as.factor(data$userId))
+  # 
+  # bi <- matrix(rep(0, I), ncol = I)
+  # colnames(bi) <- levels(as.factor(data$movieId))
+  
+  bu <- rep(0, U)
+  
+  bi <- rep(0, I)
+  
+  au <- rep(0, U) 
+  
+  bit <- matrix(rep(0, 10 * I), ncol = 10)
+  colnames(bit) <- levels(as.factor(data$movieId))
+  
+  
+  movie_rate_sum <- rep(NA, I)
+  movie_count <- rep(NA, I)
+  for (i in 1:nrow(train)) {
+      movie_id <- train[i, 2]
+      movie_count[i] <- length(train$movieId[train$movieId == movie_id])
+      movie_rate_sum <- sum(train$rating[train$movieId == movie_id])
+  }
+  
+  
+  user_rate_count <- rep(NA, U)
+  user_rate_time <- rep(NA, U)
+  for (i in 1:nrow(train)) {
+      user_id <- train[i, 1]
+      user_rate_count <- length(train$userId[train$userId == user_id])
+      user_rate_time <- sum(train$timestamp[train$userId == user_id])
+  }
+  
+  dev <- function(user, t) {
+    if (user_rate_count == 0) {
+      return (0)
+    } else if (t > user_rate_time[user] / user_rate_count[user]) {
+      return ((t - user_rate_time[user] / user_rate_count[user]) / 1e7) ** 0.4
+    } else {
+      return -((-t + user_rate_time[user] / user_rate_count[user]) / 1e7) ** 0.4
+    }
+  }
+    
+  Q = percentile(train$timestamp, c(1:10)/10)
+    
+  Bin <- function(t) {
+      if (t <= Q[1]) return (1)
+      else if (t <= Q[2]) return (2)
+      else if (t <= Q[3]) return (3)
+      else if (t <= Q[4]) return (4)
+      else if (t <= Q[5]) return (5)
+      else if (t <= Q[6]) return (6)
+      else if (t <= Q[7]) return (7)
+      else if (t <= Q[8]) return (8)
+      else if (t <= Q[9]) return (9)
+      else return (10)
+    }
+ 
+  #mean of all the ratings in train data set.
+  mu <- mean(train$rating)
+  
+  
+  
+  # sort movie id to make sure that they are from small to large
+  movie.id <- sort(unique(data$movieId))
+  
+  # sort the data by userid then by movie id
+  train <- arrange(train, userId, movieId)
+  
+
+    ## 1e7/could try 1e8 (lambda should be different) 
+    
+  
+  
+  # set vacant cells to record train and test rmse
+  train_RMSE <- c()
+  test_RMSE <- c()
+  
+  
+  for (l in 1:max.iter){
+    # Step 2: Fix q, solve p
+    # we need new factors to add bu, bi into calculation
+    q_idb <- rbind(rep(1,I), q)
+    colnames(q_idb) <- levels(as.factor(data$movieId))
+    p_idb <- rbind(bu, p)
+    
+    for (u in 1:U) {
+      # find all the moives rated by user u
+      i_ratedby_u <- as.character(train[train$userId==u,]$movieId)
+      x<-train[train$userId==u,]$rating
+      R_m_u <- matrix(x,ncol=length(x),nrow = 1)
+      # find all time from user u
+      t <- filter(train, userId == u, movieId == i_ratedby_u)
+      time <- t$timestamp
+      d <- dev(u, time)
+      # Bu(t)
+      But <- bu[u] + au[u]*d
+      # Bi(t)
+      Bit <- bi[i_ratedby_u] + bit[i_ratedby_u, Bin(time)]
+      # update p(t).tilde
+      
+      p_idb[,u] <- solve(q_idb[,i_ratedby_u] %*% t(q_idb[,i_ratedby_u]) + lambda * diag(f+1)) %*%
+        q_idb[,i_ratedby_u] %*% t(R_m_u - mu -But - Bit)
+      # update au
+      au[u] <- (R_m_u - mu -But - Bit)*d/lambda
+    }
+    
+    # update bu and p 
+    bu <- p_idb[1, ]
+    p <- p_idb[-1, ]
+ 
+   
+    
+    
+    # Step 3: Fix p, solve q
+    # we need new factors to add bu, bi into calculation
+    p_idb <- rbind(rep(1,U), p)
+    colnames(p_idb) <- levels(as.factor(data$userId))
+    q_idb <- rbind(bi, q)
+    
+    for (i in 1:I) {
+      # find all the users who rate movie i
+      u_rated_i <- as.character(train[train$movieId==movie.id[i],]$userId)
+      
+      y<-train[train$movieId==movie.id[i],]$rating
+      R_m_m <- matrix(y,ncol=length(y),nrow=1)
+      
+      # find all time from user u
+      t <- filter(train, movieId == i, userId == u_rated_i)
+      time <- t$timestamp
+      d <- dev(u_rated_i, time)
+      # Bu(t)
+      But <- bu[u_rated_i] + au[u_rated_i]*d
+      # Bi(t)
+      Bit <- bi[i] + bit[i, Bin(time)]
+      
+      # update q.tilda
+      q_idb[,i] <- solve(p_idb[,u_rated_i] %*% t(p_idb[,u_rated_i]) + lambda* diag(f+1)) %*%
+        p_idb[,u_rated_i] %*% t(R_m_m - mu - Bit - But)
+      # update bit
+      bit[i, ] <- (R_m_m - mu -But - Bit)/lambda
+    }
+    
+    # update bi and q
+    bi <- q_idb[1,]
+    q <- q_idb[-1,]
+    
+    # Summerize
+    cat("iter:", l, "\t")
+    est_rating <- t(p) %*% q + mu + bu + au * dev()
+    colnames(est_rating) <- levels(as.factor(data$movieId))
+    
+    train_RMSE_cur <- RMSE(train, est_rating)
+    cat("training RMSE:", train_RMSE_cur, "\t")
+    train_RMSE <- c(train_RMSE, train_RMSE_cur)
+    
+    test_RMSE_cur <- RMSE(test, est_rating)
+    cat("test RMSE:",test_RMSE_cur, "\n")
+    test_RMSE <- c(test_RMSE, test_RMSE_cur)
+    
+    
+  }
+  
+  return(list(p = p, q = q, bi = bi, bu = bu, mu= mu, au = au, bit = bit, train_RMSE = train_RMSE, test_RMSE = test_RMSE))
+  
+}
+
+
+
+
+```
+
+
+
