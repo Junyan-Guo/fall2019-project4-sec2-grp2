@@ -14,42 +14,24 @@ Term: Fall 2019
 	+ Yang, Nan ny2291@columbia.edu
 + Project summary: 
 	+ **Background** 
-        
-        Recommender systems usually based on one of two strategies. The content filtering approach and the **_collaborative filtering_** method. The content filtering approach creates a profile for each user or product to characterize its nature, while collaborative filtering relies only on past user behavior—like ratings without requiring the creation of explicit profiles. The two primary areas of **_collaborative filtering_** are the neighborhood methods and **_latent factor models_**. Neighborhood methods are centered on computing the relationships between items or between users. **_latent factor models_** are an alternative approach that tries to explain the ratings by characterizing both items and users on, say, 20 to 100 factors inferred from the ratings patterns. Some of the most successful realizations of latent factor models are based on **_matrix factorization_**.
-        
-	+ **Objective** 
-        
-        In this project, our group implement, evaluate and compare algorithms for **_Collaborative Filtering_** to produce a good prediction of users’ preferences for movies on on the Netflix Prize dataset. For this project, our team #2 is assigned with [Pairing combination 9 + 11 + 13  from the Collaborative](https://drive.google.com/file/d/1NPcbGBv9hVOTXr1sYq_R7ze0qC25CkuB/view). The specific technique used for the combination are illustrated below. You can also [click here](https://github.com/TZstatsADS/ADS_Teaching/blob/master/Projects_StarterCodes/Project4-RecommenderSystem/doc/Matrix%20Factorization.pdf) for more details of our methods. 
+       
+        This project mainly focused on implementing different versions of alternating least squares algorithm for collavorative filtering. This technique is used fo recommender systems: matching consumers with most appropriate products in order to enhance user satisfication and loyalty.
+        The three versions of applying ALS are ALS with KNN , ALS with penalty of magnitudes and bias and intercept regularization an kNN, and the last one is  ALS with temporal regularizations and KNN. For evaluation, we compared RMSE results for different methods. Our group used R lanauage to product model and reports.
 
 
-		+ **Algorithms** 
-		- [ ] Stochastic Gradient Descent
-		- [ ] Gradient Descent with Probabilistic Assumptions
-		- [x] Alternating Least Squares 
-		
-		+ **Regularization** 
-		- [x] Penalty of Magnitudes 
-		- [x] Bias and Intercepts
-		- [x] Temporal Dynamics
-		
-		+ **Post-processing** 
-		- [x] KNN
-		- [ ] kernel ridge regression
-	
-        
-	+ **Data** 
+**Contribution statement**: 
 
-        Our Netfilx Prize dataset includes 100836 ratings and 3683 tag applications across 9742 movies. These data were created by 610 users between March 29, 1996 and September 24, 2018. This dataset was generated on September 26, 2018. Users were selected at random for inclusion. All selected users had rated at least 20 movies. 	
+Implementation of A3+R1R2: Hu Hang, Yang Nan
 
+Implementation of A3+R3: Xu Chang
 
-**References**
-1. Y. Koren. “Matrix Factorization Techniques for Recommender Systems.” Journal Computer, 42 , no. 8, 2009, pp. 30–37.
-2. A. Paterek, “Improving Regularized Singular Value Decomposition for Collaborative Filtering,” Proc. KDD Cup and Workshop, ACM Press, 2007, pp. 39-42.
-3. R. Salakhutdinov and A. Mnih, “Probabilistic Matrix Factorization,” Proc. Advances in Neural Information Processing Systems 20 (NIPS 07), ACM Press, 2008, pp. 1257-1264.
-4. Y. Zhou et al., “Large-Scale Parallel Collaborative Filtering for the Netflix Prize,” Proc. 4th Int’l Conf. Algorithmic Aspects in Information and Management, LNCS 5034, Springer, 2008, pp. 337-348.
-5. Y. Koren, “Collaborative Filtering with Temporal Dynam- ics,” Proc. 15th ACM SIGKDD Int’l Conf. Knowledge Discovery and Data Mining (KDD 09), ACM Press, 2009, pp. 447-455.
+Implementation of P2:Huang Yian
 
-**Contribution statement**: [default] All team members contributed equally in all stages of this project. All team members approve our work presented in this GitHub repository including this contributions statement. 
+Preparing Slides for presentation: Nyu Chai
+
+Report: Nyu Chai
+
+Presentation: Nyu Chai
 
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
