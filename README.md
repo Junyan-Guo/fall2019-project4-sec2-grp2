@@ -55,7 +55,7 @@ A3+R3+P2      | Content Cell | Content Cell | Content Cell | Content Cell| Conte
 	+ Implementation of modeling A3+R3: Xu Chang
 	+ Implementation of modeling P2:Huang Yian
 	+ Preparing Slides for presentation & presentation : Nyu Chai
-	+ Report: Nyu Chai, Huang Yian
+	+ Results Report: Nyu Chai, Huang Yian
 	
  + **References**
 	+ Y. Koren. “Matrix Factorization Techniques for Recommender Systems.” Journal Computer, 42 , no. 8, 2009, pp. 30–37.
