@@ -37,6 +37,16 @@ Term: Fall 2019
  	+ **Data** 
 
          Our Netfilx Prize dataset includes 100836 ratings and 3683 tag applications across 9742 movies. These data were created by 610 users between March 29, 1996 and September 24, 2018. This dataset was generated on September 26, 2018. Users were selected at random for inclusion. All selected users had rated at least 20 movies. 
+	 
+ 	+ **Results** 
+	
+	
+Methods       | f            |\lambdas      |Max Iteration | Train RMSE  | Test RMSE
+------------- | -------------|------------- | -------------|-------------|-------------
+A3+P2         |            10|          0.1 |      5       |       0.5893|1.3447
+A3+R1R2+P2    |           20 |           10 |            4 |       0.5926| 1.3426
+A3+R3+P2      | Content Cell | Content Cell | Content Cell | Content Cell| Content Cell
+
 
 + **Contribution statement**: 
 	+ Implementation of modeling A3+R1R2: Hu Hang, Yang Nan
