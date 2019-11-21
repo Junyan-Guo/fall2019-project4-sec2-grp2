@@ -11,11 +11,12 @@
 
 RMSE <- function(rating, est_rating){
   sqr_err <- function(obs){
-    sqr_error <- (obs[3] - est_rating[obs[1], as.character(obs[2])])^2
+    sqr_error <- (obs[3] - est_rating[as.character(obs[1]), as.character(obs[2])])^2
     return(sqr_error)
   }
   return(sqrt(mean(apply(rating, 1, sqr_err))))  
 }
+
 
 
 
@@ -149,6 +150,7 @@ ALS.R3 <- function(f = 10, lambda = 5, max.iter, data, train, test){
     
     R <- mu_ui + bu_ui + bi_ui + mat + bit_ui
     
+    
   
    
      
@@ -156,8 +158,9 @@ ALS.R3 <- function(f = 10, lambda = 5, max.iter, data, train, test){
     
     # Summerize
     cat("iter:", l, "\t")
-    est_rating <- R
+    est_rating <- as.matrix(R) 
     colnames(est_rating) <- levels(as.factor(data$movieId))
+    rownames(est_rating) <- levels(as.factor(data$userId))
     
     train_RMSE_cur <- RMSE(train, est_rating)
     cat("training RMSE:", train_RMSE_cur, "\t")
