@@ -10,7 +10,7 @@ output: html_document
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-data <- read.csv("C:/Users/huhan/OneDrive/Desktop/2019 Fall/GR 5243/fall2019-project4-sec2-grp2-master/fall2019-project4-sec2-grp2-master/data/ml-latest-small/ratings.csv")
+data <- read.csv("../ratings.csv")
 set.seed(0)
 ## shuffle the row of the entire dataset
 data <- data[sample(nrow(data)),]
@@ -61,14 +61,14 @@ R3. [Temporal Dynamics](./paper/P5 Collaborative Filtering with Temporal Dynamic
 ```{r}
 U <- length(unique(data$userId))
 I <- length(unique(data$movieId))
-source("C:/Users/huhan/OneDrive/Desktop/2019 Fall/GR 5243/fall2019-project4-sec2-grp2-master/fall2019-project4-sec2-grp2-master/lib/ALS.R1+R2.R")
+source("..lib/ALS.R1+R2.R")
 ```
 
 
 #### Step 2.2 Parameter Tuning
 Here you should tune parameters, such as the dimension of factor and the penalty parameter $\lambda$ by cross-validation.
 ```{r}
-source("C:/Users/huhan/OneDrive/Desktop/2019 Fall/GR 5243/fall2019-project4-sec2-grp2-master/fall2019-project4-sec2-grp2-master/lib/cross_validation_R1R2.R")
+source("../lib/cross_validation_R1R2.R")
 f_list <- seq(10, 20, 10)
 l_list <- seq(1, 2, 1)
 f_l <- expand.grid(f_list, l_list)
@@ -86,11 +86,11 @@ run_time <- system.time(for(i in 1:nrow(f_l)){
   
 })
 
-save(result_summary, file = "C:/Users/huhan/OneDrive/Desktop/2019 Fall/GR 5243/fall2019-project4-sec2-grp2-master/fall2019-project4-sec2-grp2-master/output/rmser1r2new.Rdata")
+save(result_summary, file = "../output/rmser1r2new.Rdata")
 ```
 
 ```{r}
-load("C:/Users/huhan/OneDrive/Desktop/2019 Fall/GR 5243/fall2019-project4-sec2-grp2-master/fall2019-project4-sec2-grp2-master/output/rmser1r2new.Rdata")
+load("../output/rmser1r2new.Rdata")
 rmse <- data.frame(rbind(t(result_summary[1,,]), t(result_summary[2,,])), train_test = rep(c("Train", "Test"), each = 4), par = rep(paste("f = ", f_l[,1], ", lambda = ", 10^f_l[,2]), times = 2)) %>% gather("epoch", "RMSE", -train_test, -par)
 rmse$epoch <- as.numeric(gsub("X", "", rmse$epoch))
 rmse %>% ggplot(aes(x = epoch, y = RMSE, col = train_test)) + geom_point() + facet_grid(~par)
@@ -112,12 +112,12 @@ P4:[Linearly combination of predictors](./paper/P4 Large-scale Parallel Collabor
 result <- ALS.R1R2(f = 20, lambda =10,
                     max.iter = 4, data = data, train = data_train, test = data_test)
 
-save(result, file = "C:/Users/huhan/OneDrive/Desktop/2019 Fall/GR 5243/fall2019-project4-sec2-grp2-master/fall2019-project4-sec2-grp2-master/output/mat_fac_r1r2new.RData")
+save(result, file = "../output/mat_fac_r1r2new.RData")
 ```
 
 #### Knn PostProcessing
 ```{r}
-load("C:/Users/huhan/OneDrive/Desktop/2019 Fall/GR 5243/fall2019-project4-sec2-grp2-master/fall2019-project4-sec2-grp2-master/output/mat_fac_r1r2new.RData")
+load("../output/mat_fac_r1r2new.RData")
 library(lsa)
 library(plyr)
 ratingmean<-function(data){
