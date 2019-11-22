@@ -45,7 +45,7 @@ Methods       | f            |\lambdas      |Max Iteration | Train RMSE  | Test 
 ------------- | -------------|------------- | -------------|-------------|-------------
 A3+P2         |            10|          0.1 |      5       |       0.5893|1.3447
 A3+R1R2+P2    |           20 |           10 |            4 |       0.5926| 1.3426
-A3+R3+P2      | Content Cell | Content Cell | Content Cell | Content Cell| Content Cell
+A3+R3+P2      |           10 |            5 | 5            | 0.82        | 
 
 
 + **Contribution statement**: 
