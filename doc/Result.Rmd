@@ -1,0 +1,14 @@
+#Introduction
+In this project, our group implement matrix factorization by focusing on different versions of alternating least squares algorithm for different Regularizations and KNN as Post-processing. The objective is to produce a good prediction of users’ preferences for movies on on the Netflix Prize dataset. For this project, our team #2 is assigned with Pairing combination 9 + 11 + 13 from the Collaborative. For evaluation, we compared RMSE results for different methods. Our group used R lanauage to product model and reports. The specific technique used for the combination are illustrated below. You can also see (https://github.com/TZstatsADS/ADS_Teaching/blob/master/Projects_StarterCodes/Project4-RecommenderSystem/doc/Matrix%20Factorization.pdf) for more details of our methods.
+
+
+#Models
+
+`Alternating Least Squares + KNN`
+
+`Alternating Least Squares + Penalty of magnitudes + Bias and Intercepts + KNN`
+
+`Alternating Least Squares + Temporal Dynamics + KNN`
+
+
+

@@ -1,0 +1,134 @@
+---
+title: "Advanced Data Science Project 4 Report"
+date: "21/11/2019"
+output:
+  pdf_document:
+    latex_engine: xelatex
+sansfont: Arial
+fig_crop: false
+toc: true
+header-includes:
+  - \usepackage{booktabs} 
+  - \usepackage{sectsty} \sectionfont{\centering}
+  - \renewcommand{\contentsname}{}\vspace{-2cm} 
+  - \usepackage{pdfpages}
+---
+\newpage
+
+```{r child = 'Result.Rmd'}
+```
+
+\newpage
+
+#Model 1:Alternating Least Squares + KNN
+
+##Equations recap
+###Alternating Least Squares
+
+$$min_{q^{\star}p^{\star}} \sum_{(u,i) \in K} (r_ui-q_i^Tp_u)^2 + \lambda(\sum _i n_{q_i} \| q_i\|^2 +\sum _i n_{p_u} \| p_u\|^2 )$$
+ALS technique rotate between fixing the $q_i$'s and fixing the $p_u$'s. When all pu's are fixed, system recomputes the $q_i$'s by solving a least-squares problem, and vice versa. This ensures that each step decreases object function until convergence. 
+
+$f$: dimension of latent factors
+
+$q_i$: factors associated with item i , measures the extent to which items possesses those factors
+
+$p_u$: factors associated with user u, measures the extent of interest that user has in an item  are high on corresponding factors.
+
+
+###Post-processing
+
+KNN:
+$$s(q_i,q_j) = \frac{q_i^T,q_j}{\|q_i\| \|q_j\|}$$
+
+We first defined similarity between movies by the above formula. Then we used this similarity S to apply KNN prediction. 
+
+###Codes and Details
+\includepdf[pages={-}]{Project_4_ALSA3-.pdf}
+
+
+
+#Model 2:Alternating Least Squares + Penalty of magnitudes + Bias and Intercepts + KNN
+##Equations recap
+###Alternating Least Squares
+
+$$min_{q^{\star}p^{\star}} \sum_{(u,i) \in K} (r_ui-q_i^Tp_u)^2 + \lambda(\sum _i n_{q_i} \| q_i\|^2 +\sum _i n_{p_u} \| p_u\|^2 )$$
+ALS technique rotate between fixing the $q_i$'s and fixing the $p_u$'s. When all pu's are fixed, system recomputes the $q_i$'s by solving a least-squares problem, and vice versa. This ensures that each step decreases object function until convergence. 
+
+$f$: dimension of latent factors
+
+$q_i$: factors associated with item i , measures the extent to which items possesses those factors
+
+$p_u$: factors associated with user u, measures the extent of interest that user has in an item  are high on corresponding factors.
+
+
+###Regularizations 
+
+1. Penalty of magnitudes:
+
+$$\sum_{(u,i)\in K} \lambda (\|q_i\|^2+\|p_u\|^2)$$
+The constant lambda controls the extent of regularization and we determined it through cross validation. 
+
+
+2.Bias and Intercepts:
+$$b_{ui}=\mu +b_i+b_u$$
+$$\hat{r}_{ui}=b_{ui} +q_i^T p_u$$
+
+$$min_{q^{\star},p^{\star},n^{\star}} \sum_{(u,i) \in K} (r_ui-\mu-b_u-b_i-p_u^Tq_i)^2 + \lambda(\| p_u\|^2+\| q_i\|^2+b_u^2+b_i^2)$$
+
+Because some users tend to giver higher or lower ratings than others, we have to add user or item bias in our object function.
+
+
+###Post-processing
+
+KNN:
+$$s(q_i,q_j) = \frac{q_i^T,q_j}{\|q_i\| \|q_j\|}$$
+
+We first defined similarity between movies by the above formula. Then we used this similarity S to apply KNN prediction. 
+
+
+
+###Codes and Details
+\includepdf[pages={-}]{Project_4_ALSR1R2.pdf}
+
+#Model 3:Alternating Least Squares + Temporal Dynamics + KNN
+##Equations recap
+###Alternating Least Squares
+
+$$min_{q^{\star}p^{\star}} \sum_{(u,i) \in K} (r_ui-q_i^Tp_u)^2 + \lambda(\sum _i n_{q_i} \| q_i\|^2 +\sum _i n_{p_u} \| p_u\|^2 )$$
+ALS technique rotate between fixing the $q_i$'s and fixing the $p_u$'s. When all pu's are fixed, system recomputes the $q_i$'s by solving a least-squares problem, and vice versa. This ensures that each step decreases object function until convergence. 
+
+$f$: dimension of latent factors
+
+$q_i$: factors associated with item i , measures the extent to which items possesses those factors
+
+$p_u$: factors associated with user u, measures the extent of interest that user has in an item  are high on corresponding factors.
+
+###Regularizations 
+Temporal Dynamics:
+
+$$\hat{r}_ui = \mu + b_u + b_i + b_{i.Bin(t)}+q_i^Tp_u$$
+Since users' preferences and products' popularity are changing over time. We have to consider time factor so add a new variable time to our previous function.For each bin, we used one year of the day and we get 23 bins in total.
+
+
+###Post-processing
+
+KNN:
+$$s(q_i,q_j) = \frac{q_i^T,q_j}{\|q_i\| \|q_j\|}$$
+
+We first defined similarity between movies by the above formula. Then we used this similarity S to apply KNN prediction. 
+
+
+###Codes and Details
+\includepdf[pages={-}]{A3 + R3.pdf}
+
+
+\newpage
+
+#Conclusions
+Methods       | f |$\lambda$  |Max Iteration   | Train RMSE | Test RMSE
+------------- | -------------|------------- | -------------|-------------|-------------
+A3+P2  | 10| 0.1 | 5 | 0.5893|1.3447|-------------
+A3+R1R2+P2  | 20 | 10 | 4 | 0.5926| 1.3426
+A3+R3+P2  | 10| 5 | 5| 0.82| NA
+
+
