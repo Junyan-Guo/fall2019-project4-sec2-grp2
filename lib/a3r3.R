@@ -45,8 +45,27 @@ ALS.R3 <- function(f = 10, lambda = 5, max.iter, data, train, test){
   
   bit <- matrix(rep(NA, I*30), ncol = I)
   colnames(bi) <- levels(as.factor(data$movieId))
+  ## update bit
+  for (t in 1:30) {
+    sub <- filter(train, Bin == t)
+    for (i in 1:I) {
+      ssub <- filter(sub, movieId == i) 
+      r <- sum(ssub$rating)
+      n <- length(unique(ssub$userId))+lambda
+      bit[t, i] <- r/n
+    }
+  }
   
-  
+  bit_ui <- matrix(rep(0, U*I), ncol = I)
+  for (u in 1:U) {
+    for (i in 1:I) {
+      sub <- filter(train, userId == u, movieId == i)
+      if (dim(sub)[1] > 0) {
+        t <- as.numeric(sub$Bin)
+        bit_ui[u, i] <- bit[t, i]
+      }
+    }
+  }
 
   
   #mean of all the ratings in train data set.
@@ -104,16 +123,7 @@ ALS.R3 <- function(f = 10, lambda = 5, max.iter, data, train, test){
     bi[1,] <- q.tilde[1,]
     q <- q.tilde[-1,]
     
-    ## update bit
-    for (t in 1:30) {
-      sub <- filter(train, Bin == t)
-      for (i in 1:I) {
-        ssub <- filter(sub, movieId == i) 
-        r <- sum(ssub$rating)
-        n <- length(unique(ssub$userId))+lambda
-        bit[t, i] <- r/n
-      }
-    }
+    
     
     # Rating Matrix
     mat <- matrix(rep(NA, U*I), ncol = I)
@@ -133,16 +143,7 @@ ALS.R3 <- function(f = 10, lambda = 5, max.iter, data, train, test){
       bi_ui[u, ] <- bi
     }
     
-    bit_ui <- matrix(rep(0, U*I), ncol = I)
-    for (u in 1:U) {
-      for (i in 1:I) {
-          sub <- filter(train, userId == u, movieId == i)
-          if (dim(sub)[1] > 0) {
-            t <- as.numeric(sub$Bin)
-            bit_ui[u, i] <- bit[t, i]
-          }
-        }
-      }
+    
     
     
   
